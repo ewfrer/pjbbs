@@ -110,12 +110,15 @@ def sendSMSCode():
         source = string.digits
         source = ''.join(random.sample(source, 4))
         #发送验证码
-        r = send_sms(phone_numbers=fm.telephone.data,smscode=source)
-        if json.loads(r.decode("utf-8"))['Code'] == 'OK':
-            saveCache(fm.telephone.data, source, 30 * 60)    # 存到缓存中
-            return jsonify(respSuccess("短信验证码发送成功，请查收"))
-        else:  # 发送失败
-            return jsonify(respParamErr("请检查网络"))
+        # r = send_sms(phone_numbers=fm.telephone.data,smscode=source)
+        from task import sendsmscode
+        sendsmscode.delay(fm.telephone.data,source)
+        return jsonify(respSuccess(msg="短信验证码发送成功，请查收"))
+        # if json.loads(r.decode("utf-8"))['Code'] == 'OK':
+        #     saveCache(fm.telephone.data, source, 30 * 60)    # 存到缓存中
+        #     return jsonify(respSuccess("短信验证码发送成功，请查收"))
+        # else:  # 发送失败
+        #     return jsonify(respParamErr("请检查网络"))
     else:
         return jsonify(respParamErr(fm.err))
 @bp.route("/logout/")

@@ -16,7 +16,7 @@ from functools import wraps
 from apps.common.models import Banner,Post,Tag
 from apps.cms.models import Boarder
 from qiniu import Auth
-from task import sendEmailCode
+from task import sendemail
 
 bp = Blueprint('cms', __name__, url_prefix="/cms/")
 
@@ -146,7 +146,7 @@ def sendEmailCode():
         # msg = Message("邮箱验证码", recipients=[fm.email.data], body="验证码为" + r)
         # mail.send(msg)
         recvmail = fm.email.data
-        sendEmailCode.dalay(recvmail,r)
+        sendemail.delay(recvmail,r)
         return jsonify(respSuccess(msg='发送成功，请查看邮箱'))
     else:
         return jsonify(respParamErr(msg=fm.err))
